@@ -1,3 +1,4 @@
+import { Outlet } from "react-router"
 import { Button } from "./components/ui/button"
 
 function App() {
@@ -6,7 +7,7 @@ function App() {
     <>
     
       <h1>This is a simple react app with typescript and shadcn</h1>
-      <Button>Click me</Button>
+      <Outlet></Outlet>
      
     </>
   )
