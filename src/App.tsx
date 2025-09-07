@@ -1,14 +1,14 @@
 import { Outlet } from "react-router"
-import { Button } from "./components/ui/button"
+import CommonLayout from "./components/layouts/CommonLayout"
 
 function App() {
 
   return (
     <>
-    
-      <h1>This is a simple react app with typescript and shadcn</h1>
-      <Outlet></Outlet>
-     
+      <CommonLayout>
+        <Outlet></Outlet>
+      </CommonLayout>
+      
     </>
   )
 }
