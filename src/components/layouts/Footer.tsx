@@ -3,11 +3,14 @@ import Logo from "@/assets/icons/Logo";
 export default function Footer() {
   return (
     <footer>
-      <div className="container mx-auto space-y-8 px-8 py-12">
+      <div className="mx-auto container space-y-8 px-8 py-16">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div>
-            <Logo/>
-            <p className="mt-4 max-w-xs text-foreground">
+            <div className="text-foreground">
+              <Logo />
+            </div>
+
+            <p className="mt-4 max-w-xs text-muted-foreground/80">
               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Esse non
               cupiditate quae nam molestias.
             </p>
@@ -308,7 +311,7 @@ export default function Footer() {
         </div>
 
         <p className="text-xs text-gray-500">
-          &copy; 2025. Tour Management System. All rights reserved.
+          &copy; 2022. Tour Management System. All rights reserved.
         </p>
       </div>
     </footer>
