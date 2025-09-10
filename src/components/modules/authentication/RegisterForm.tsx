@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Link } from "react-router";
 import { useForm } from "react-hook-form";
 import {
@@ -16,28 +15,28 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-
-
-const formSchema = z.object({
-  name: z.string().min(2).max(50),
-})
+const registerSchema = z.object({
+  name: z.string().min(3, {error: "Name is too short"}).max(50),
+  email: z.email(),
+  password: z.string().min(8, {error: "Password is too short"}),
+  confirmPassword: z.string().min(8, {error: "Confirm Password is too short"}),
+});
 
 export function RegisterForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
-  
-  const form = useForm<z.infer<typeof formSchema>>(
-    {
-      resolver: zodResolver(formSchema),
-      defaultValues: {
-        name: ""
-      }
-    }
-  );
-  
+  const form = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
+  const onSubmit = (data: z.infer<typeof registerSchema>) => {
     console.log(data);
   };
 
@@ -53,7 +52,7 @@ export function RegisterForm({
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="name"
@@ -64,13 +63,61 @@ export function RegisterForm({
                   <Input placeholder="Mithun Kumer Modak" {...field} />
                 </FormControl>
                 <FormDescription className="sr-only">
-                  This is your public display name.
+                  This is your name.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit">Submit</Button>
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input placeholder="mithunmodak@gmail.com" type="email" {...field} />
+                </FormControl>
+                <FormDescription className="sr-only">
+                  This is your email.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input placeholder="*************" type="password" {...field} />
+                </FormControl>
+                <FormDescription className="sr-only">
+                  This is your password.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirm Password</FormLabel>
+                <FormControl>
+                  <Input placeholder="*************" type="password" {...field} />
+                </FormControl>
+                <FormDescription className="sr-only">
+                  This is Confirm Password.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit" className="w-full">Submit</Button>
         </form>
       </Form>
 
