@@ -13,15 +13,31 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+
+
+const formSchema = z.object({
+  name: z.string().min(2).max(50),
+})
 
 export function RegisterForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
-  const form = useForm();
-  console.log(form);
+  
+  const form = useForm<z.infer<typeof formSchema>>(
+    {
+      resolver: zodResolver(formSchema),
+      defaultValues: {
+        name: ""
+      }
+    }
+  );
+  
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
     console.log(data);
   };
 
@@ -47,7 +63,7 @@ export function RegisterForm({
                 <FormControl>
                   <Input placeholder="Mithun Kumer Modak" {...field} />
                 </FormControl>
-                <FormDescription>
+                <FormDescription className="sr-only">
                   This is your public display name.
                 </FormDescription>
                 <FormMessage />
