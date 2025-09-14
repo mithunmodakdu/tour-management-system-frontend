@@ -47,7 +47,7 @@ export function RegisterForm({
   });
 
   const onSubmit = async(data: z.infer<typeof registerSchema>) => {
-    console.log(data);
+   
     const userInfo = {
       name: data.name,
       email: data.email,
