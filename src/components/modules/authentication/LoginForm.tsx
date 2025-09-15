@@ -43,7 +43,7 @@ export function LoginForm({
 
       if(error.status === 401){
         toast.error("You are not verified.");
-        navigate("/verify");
+        navigate("/verify", {state: data.email});
       }
       
     }
