@@ -1,12 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router";
-import {
-  useForm,
-  type FieldValues,
-  type SubmitHandler
-} from "react-hook-form";
+import { useForm, type FieldValues, type SubmitHandler } from "react-hook-form";
 
 import {
   Form,
@@ -16,18 +13,41 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useLoginMutation } from "@/redux/features/auth/auth.api";
+import { toast } from "sonner";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
-  
   const form = useForm();
-  
+  const [login] = useLoginMutation();
+  const navigate = useNavigate();
+
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    console.log(data)
-    
-  }
+    console.log(data);
+    const userInfo = {
+      email: data.email,
+      password: data.password,
+    };
+
+    try {
+      const res = await login(userInfo).unwrap();
+      
+      
+
+      // toast.success("You logged in successfully.");
+
+    } catch (error: any) {
+      console.log(error);
+
+      if(error.status === 401){
+        toast.error("You are not verified.");
+        navigate("/verify", {state: data.email});
+      }
+      
+    }
+  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -105,7 +125,6 @@ export function LoginForm({
           Register
         </Link>
       </div>
-
     </div>
   );
-  }
+}
