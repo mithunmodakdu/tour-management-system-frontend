@@ -3,7 +3,8 @@ import axios from "axios";
 
 export const axiosInstance = axios.create(
   {
-    baseURL: config.baseURL
+    baseURL: config.baseURL,
+    withCredentials: true
     
   }
 );

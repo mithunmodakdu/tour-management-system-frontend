@@ -33,10 +33,8 @@ export function LoginForm({
 
     try {
       const res = await login(userInfo).unwrap();
-      
-      
-
-      // toast.success("You logged in successfully.");
+  
+      toast.success("You logged in successfully.");
 
     } catch (error: any) {
       console.log(error);
