@@ -21,7 +21,11 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { useSendOTPMutation, useVerifyOTPMutation } from "@/redux/features/auth/auth.api";
+import { cn } from "@/lib/utils";
+import {
+  useSendOTPMutation,
+  useVerifyOTPMutation,
+} from "@/redux/features/auth/auth.api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dot } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -38,7 +42,7 @@ export default function Verify() {
   const navigate = useNavigate();
   const [sendOTP] = useSendOTPMutation();
   const [verifyOTP] = useVerifyOTPMutation();
-  const [timer, setTimer] = useState(120);
+  const [timer, setTimer] = useState(12);
 
   // useEffect(() => {
   //   if (!email) {
@@ -46,14 +50,17 @@ export default function Verify() {
   //   }
   // }, [email]);
 
-  useEffect(()=>{
-    const timerId = setInterval(() =>{
-      if(email && confirmed){
-        setTimer((prev) => prev -1)
-      }
-    }, 1000)
+  useEffect(() => {
+    if (!email || !confirmed) {
+      return;
+    }
+    const timerId = setInterval(() => {
+      setTimer((prev) => (prev > 0 ? prev - 1 : 0));
+      console.log("Tick");
+    }, 1000);
 
-  }, [email, confirmed])
+    return () => clearInterval(timerId);
+  }, [email, confirmed]);
 
   const FormSchema = z.object({
     pin: z.string().min(6, {
@@ -68,42 +75,39 @@ export default function Verify() {
     },
   });
 
-  const handleConfirm = async() =>{
-    // const toastId = toast.loading("Sending OTP")
+  const handleSendOTP = async () => {
+    const toastId = toast.loading("Sending OTP");
 
-     setConfirmed(true);
+    try {
+      const res = await sendOTP({ email: email }).unwrap();
 
-    // try {
-    //   const res = await sendOTP({email: email}).unwrap();
-      
-    //   if(res.success){
-    //     toast.success("OTP has been sent to your email", {id: toastId});
-       
-    //   }
-  
-    // } catch (error) {
-    //   console.log(error)
-    // }
+      if (res.success) {
+        toast.success("OTP has been sent to your email", { id: toastId });
+        setConfirmed(true);
+        setTimer(12);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  }
-
-  const onSubmit = async(data: z.infer<typeof FormSchema>) => {
-    const toastId = toast.loading("Verifying OTP")
+  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    const toastId = toast.loading("Verifying OTP");
     const userInfo = {
       email,
-      otp: data.pin
-    }
+      otp: data.pin,
+    };
 
     try {
       const res = await verifyOTP(userInfo).unwrap();
-      if(res.success){
-        toast.success("OTP verified.", {id: toastId})
+      if (res.success) {
+        toast.success("OTP verified.", { id: toastId });
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
     console.log(data);
-  }
+  };
 
   return (
     <div className="h-screen grid place-content-center">
@@ -153,7 +157,18 @@ export default function Verify() {
                         </InputOTP>
                       </FormControl>
                       <FormDescription>
-                        <Button variant="link">Resend OTP</Button>
+                        <Button
+                          onClick={handleSendOTP}
+                          disabled={timer !== 0}
+                          className={cn("m-0 p-0", {
+                            "text-gray-500": timer !== 0,
+                            "cursor-pointer": timer === 0,
+                          })}
+                          type="button"
+                          variant="link"
+                        >
+                          Resend OTP
+                        </Button>{" "}
                         {timer}
                       </FormDescription>
                       <FormMessage />
@@ -179,7 +194,7 @@ export default function Verify() {
           </CardHeader>
 
           <CardFooter className="flex justify-end">
-            <Button onClick={handleConfirm} className="w-[300px]">
+            <Button onClick={handleSendOTP} className="w-[300px]">
               Confirm
             </Button>
           </CardFooter>
