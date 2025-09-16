@@ -38,12 +38,22 @@ export default function Verify() {
   const navigate = useNavigate();
   const [sendOTP] = useSendOTPMutation();
   const [verifyOTP] = useVerifyOTPMutation();
+  const [timer, setTimer] = useState(120);
 
   // useEffect(() => {
   //   if (!email) {
   //     navigate("/");
   //   }
   // }, [email]);
+
+  useEffect(()=>{
+    const timerId = setInterval(() =>{
+      if(email && confirmed){
+        setTimer((prev) => prev -1)
+      }
+    }, 1000)
+
+  }, [email, confirmed])
 
   const FormSchema = z.object({
     pin: z.string().min(6, {
@@ -59,19 +69,21 @@ export default function Verify() {
   });
 
   const handleConfirm = async() =>{
-    const toastId = toast.loading("Sending OTP")
+    // const toastId = toast.loading("Sending OTP")
 
-    try {
-      const res = await sendOTP({email: email}).unwrap();
+     setConfirmed(true);
+
+    // try {
+    //   const res = await sendOTP({email: email}).unwrap();
       
-      if(res.success){
-        toast.success("OTP has been sent to your email", {id: toastId});
-        setConfirmed(true);
-      }
+    //   if(res.success){
+    //     toast.success("OTP has been sent to your email", {id: toastId});
+       
+    //   }
   
-    } catch (error) {
-      console.log(error)
-    }
+    // } catch (error) {
+    //   console.log(error)
+    // }
 
   }
 
@@ -140,9 +152,9 @@ export default function Verify() {
                           </InputOTPGroup>
                         </InputOTP>
                       </FormControl>
-                      <FormDescription className="sr-only">
-                        Please enter the one-time password sent to your email
-                        address <br /> {email}.
+                      <FormDescription>
+                        <Button variant="link">Resend OTP</Button>
+                        {timer}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>

@@ -41,7 +41,12 @@ export function LoginForm({
     } catch (error: any) {
       console.log(error);
 
-      if(error.status === 401){
+      //we should not use error message
+      if(error.data.message === "Password does not match."){
+        toast.error("Invalid Password")
+      }
+
+      if(error.data.message === "User is not verified"){
         toast.error("You are not verified.");
         navigate("/verify", {state: data.email});
       }
