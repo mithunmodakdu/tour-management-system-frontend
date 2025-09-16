@@ -1,4 +1,4 @@
-export type { ISendOTP } from "./auth.type"
+export type { ISendOTP, IVerifyOTP } from "./auth.type"
 
 export interface IResponse<T> {
   statusCode: number;
