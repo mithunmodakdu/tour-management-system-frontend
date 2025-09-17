@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/form";
 import { useLoginMutation } from "@/redux/features/auth/auth.api";
 import { toast } from "sonner";
+import config from "@/config";
 
 export function LoginForm({
   className,
@@ -117,6 +118,7 @@ export function LoginForm({
           type="button"
           variant="outline"
           className="w-full cursor-pointer"
+          onClick={() => window.open(`${config.baseURL}/auth/google`)}
         >
           Login with Google
         </Button>
