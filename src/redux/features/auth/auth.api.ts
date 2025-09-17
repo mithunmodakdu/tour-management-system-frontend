@@ -25,6 +25,15 @@ const authApi = baseApi.injectEndpoints(
         }
       ),
 
+      logout: builder.mutation(
+        {
+          query: () =>({
+            url: "/auth/logout",
+            method: "POST"
+          })
+        }
+      ),
+
       sendOTP: builder.mutation<IResponse<null>, ISendOTP>(
         {
           query: (userInfo) =>({
@@ -60,7 +69,8 @@ const authApi = baseApi.injectEndpoints(
 
 export const {
   useRegisterMutation, 
-  useLoginMutation, 
+  useLoginMutation,
+  useLogoutMutation, 
   useSendOTPMutation, 
   useVerifyOTPMutation,
   useGetProfileInfoQuery
