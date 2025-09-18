@@ -13,7 +13,8 @@ import {
 } from "@/components/ui/popover"
 import { ModeToggle } from "./ModeToggler"
 import { Link } from "react-router"
-import { useGetProfileInfoQuery, useLogoutMutation } from "@/redux/features/auth/auth.api"
+import { authApi, useGetProfileInfoQuery, useLogoutMutation } from "@/redux/features/auth/auth.api"
+import { useAppDispatch } from "@/redux/hooks"
 
 
 // Navigation links array to be used in both desktop and mobile menus
@@ -26,11 +27,13 @@ const navigationLinks = [
 export default function Navbar() {
   const {data} = useGetProfileInfoQuery(undefined)
   const [logout] = useLogoutMutation();
+  const dispatch = useAppDispatch();
   
 
   const handleLogOut = async() =>{
     const res = await logout(undefined);
     console.log(res)
+    dispatch(authApi.util.resetApiState());
   }
 
   return (
