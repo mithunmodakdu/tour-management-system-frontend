@@ -8,6 +8,9 @@ import RegisterPage from "@/pages/Register";
 import Verify from "@/pages/Verify";
 import { createBrowserRouter } from "react-router";
 import AddTour from "@/pages/Admin/AddTour";
+import { generateRoutes } from "@/utils/generateRoutes";
+import { adminSidebarItems } from "./adminSidebarItems";
+import { userSidebarItems } from "./userSidebarItems";
 
 export const router = createBrowserRouter([
   {
@@ -26,24 +29,14 @@ export const router = createBrowserRouter([
     Component: DashboardLayout,
     path: "/admin",
     children: [
-      {
-        Component: Analytics,
-        path: "analytics"
-      },
-      {
-        Component: AddTour,
-        path: "add-tour"
-      }
+     ...generateRoutes(adminSidebarItems)
     ]
   },
   {
     Component: DashboardLayout,
     path: "/user",
     children: [
-      {
-        Component: Bookings,
-        path: "bookings"
-      }
+      ...generateRoutes(userSidebarItems)
     ]
   },
   {
