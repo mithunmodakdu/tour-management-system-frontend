@@ -13,11 +13,12 @@ import {
 } from "@/components/ui/sidebar"
 import Logo from "@/assets/icons/Logo"
 import { Link } from "react-router"
-import { adminSidebarItems } from "@/routes/adminSidebarItems"
+// import { adminSidebarItems } from "@/routes/adminSidebarItems"
+import { userSidebarItems } from "@/routes/userSidebarItems"
 
 // This is sample data.
 const data = {
-  navMain: adminSidebarItems
+  navMain: userSidebarItems
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
