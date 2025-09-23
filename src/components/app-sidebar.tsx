@@ -13,12 +13,9 @@ import {
 } from "@/components/ui/sidebar";
 import Logo from "@/assets/icons/Logo";
 import { Link } from "react-router";
-// import { adminSidebarItems } from "@/routes/adminSidebarItems"
-import { userSidebarItems } from "@/routes/userSidebarItems";
 import { getSidebarItems } from "@/utils/getSidebarItems";
 import { useGetProfileInfoQuery } from "@/redux/features/auth/auth.api";
 
-// This is sample data.
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
