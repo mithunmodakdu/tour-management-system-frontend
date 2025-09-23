@@ -26,17 +26,17 @@ export const router = createBrowserRouter([
     Component: DashboardLayout,
     path: "/admin",
     children: [
-      {index: true, element: <Navigate to="/admin/analytics" />},
-     ...generateRoutes(adminSidebarItems)
-    ]
+      { index: true, element: <Navigate to="/admin/analytics" /> },
+      ...generateRoutes(adminSidebarItems),
+    ],
   },
   {
     Component: DashboardLayout,
     path: "/user",
     children: [
-      {index: true, element: <Navigate to="/user/bookings" />},
-      ...generateRoutes(userSidebarItems)
-    ]
+      { index: true, element: <Navigate to="/user/bookings" /> },
+      ...generateRoutes(userSidebarItems),
+    ],
   },
   {
     Component: LoginPage,
