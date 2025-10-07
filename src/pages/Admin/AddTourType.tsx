@@ -1,3 +1,4 @@
+import AddTourTypeModal from "@/components/modules/Admin/TourType/AddTourTypeModal";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -15,6 +16,10 @@ export default function AddTourType() {
   console.log(data);
   return (
     <div className="w-full max-w-xl mx-auto px-5">
+      <div className="flex justify-between my-10">
+        <h1 className="text-2xl font-semibold">Tour Types</h1>
+        <AddTourTypeModal/>
+      </div>
       <div className="border border-muted rounded-md">
         <Table>
           <TableHeader>
