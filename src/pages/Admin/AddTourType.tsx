@@ -1,4 +1,4 @@
-import AddTourTypeModal from "@/components/modules/Admin/TourType/AddTourTypeModal";
+import { AddTourTypeModal } from "@/components/modules/Admin/TourType/AddTourTypeModal";
 import { Button } from "@/components/ui/button";
 import {
   Table,
