@@ -9,23 +9,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  useGetTourTypeQuery,
-  useRemoveTourTypeMutation,
-} from "@/redux/features/tour/tour.api";
+import { useGetDivisionsQuery, useRemoveDivisionMutation } from "@/redux/features/division/division.api";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AddDivision() {
-  const { data } = useGetTourTypeQuery(undefined);
-  const [removeTourType] = useRemoveTourTypeMutation();
+  const {data} = useGetDivisionsQuery(undefined);
+  const [removeDivision] = useRemoveDivisionMutation();
 
-  const handleRemoveTourType = async (tourTypeId: string) => {
-    const toastId = toast.loading("Removing tour type...")
+  const handleRemoveDivision = async (divisionId: string) => {
+    const toastId = toast.loading("Removing Division...")
     try {
-      const res = await removeTourType(tourTypeId).unwrap();
+      const res = await removeDivision(divisionId).unwrap();
       if (res.success) {
-        toast.success("Tour Type removed successfully.", {id: toastId});
+        toast.success("Division removed successfully.", {id: toastId});
       }
     } catch (error) {
       console.error(error);
@@ -52,7 +49,7 @@ export default function AddDivision() {
                 <TableCell>{item?.name}</TableCell>
                 <TableCell>
                   <DeleteConfirmation
-                    onConfirm={() => handleRemoveTourType(item._id)}
+                    onConfirm={() => handleRemoveDivision(item._id)}
                   >
                     <Button className="size-sm">
                       <Trash2 />

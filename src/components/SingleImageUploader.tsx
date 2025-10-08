@@ -23,8 +23,7 @@ export default function SingleImageUploader({onChange}) {
     maxSize,
   })
 
-  console.log("inside image uploader", files)
-
+  
   useEffect(()=>{
     if(files.length > 0){
       onChange(files[0].file)
@@ -32,6 +31,8 @@ export default function SingleImageUploader({onChange}) {
       onChange(null)
     }
   }, [files])
+
+  // console.log("inside image uploader", files)
 
   const previewUrl = files[0]?.preview || null
 
@@ -103,19 +104,6 @@ export default function SingleImageUploader({onChange}) {
         </div>
       )}
 
-      <p
-        aria-live="polite"
-        role="region"
-        className="text-muted-foreground mt-2 text-center text-xs"
-      >
-        Single image uploader w/ max size ∙{" "}
-        <a
-          href="https://github.com/origin-space/originui/tree/main/docs/use-file-upload.md"
-          className="hover:text-foreground underline"
-        >
-          API
-        </a>
-      </p>
     </div>
   )
 }

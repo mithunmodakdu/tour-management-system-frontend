@@ -20,7 +20,7 @@ import { useGetProfileInfoQuery } from "@/redux/features/auth/auth.api";
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const {data: profileData} = useGetProfileInfoQuery(undefined);
-  console.log(profileData?.data.role)
+  // console.log(profileData?.data.role)
 
   const data = {
     navMain: getSidebarItems(profileData?.data.role),
