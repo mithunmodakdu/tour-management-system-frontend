@@ -11,18 +11,28 @@ export const divisionApi = baseApi.injectEndpoints(
             method: "POST",
             data: divisionData
           }),
+          invalidatesTags: ["DIVISION"]
           
         }
       ),
 
+      removeDivision: builder.mutation(
+        {
+          query: (divisionId) => ({
+            url: `/division/${divisionId}`,
+            method: "DELETE"
+          }),
+          invalidatesTags: ["DIVISION"]
+        }
+      ),
 
-      getTourType: builder.query(
+      getDivisions: builder.query(
         {
           query: () =>({
-            url: "/tour/tour-types",
+            url: "/division",
             method: "GET"
           }),
-          providesTags: ["TOUR"],
+          providesTags: ["DIVISION"],
           transformResponse: (response) => response.data
         }
       )
@@ -32,5 +42,7 @@ export const divisionApi = baseApi.injectEndpoints(
 );
 
 export const {
- useAddDivisionMutation
+ useAddDivisionMutation,
+ useRemoveDivisionMutation,
+ useGetDivisionsQuery
 } = divisionApi;
