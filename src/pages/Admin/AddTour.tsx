@@ -11,7 +11,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -34,7 +33,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useGetDivisionsQuery } from "@/redux/features/division/division.api";
 import { useGetTourTypeQuery } from "@/redux/features/tour/tour.api";
-import { format } from "date-fns";
+import { format, formatISO } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 
@@ -72,8 +71,18 @@ export function AddTour() {
   });
 
   const onSubmit = async (data) => {
-    console.log(data);
+    // console.log(data);
+    const tourData = {
+      ...data,
+      startDate: formatISO(data.startDate),
+      endDate: formatISO(data.endDate)
+    }
+    console.log(tourData);
+    
+
   };
+
+  // console.log(new Date(new Date().setDate((new Date().getDate()-1))))
 
   return (
     <Card className="w-full max-w-3xl mx-auto">
@@ -199,11 +208,12 @@ export function AddTour() {
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
-                          selected={field.value}
+                          selected={new Date(field.value)}
                           onSelect={field.onChange}
                           disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
+                            date < new Date(new Date().setDate((new Date().getDate()-1)))
                           }
+                          
                           captionLayout="dropdown"
                         />
                       </PopoverContent>
@@ -240,10 +250,10 @@ export function AddTour() {
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
-                          selected={field.value}
+                          selected={new Date(field.value)}
                           onSelect={field.onChange}
                           disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
+                            date < new Date(new Date().setDate((new Date().getDate()-1)))
                           }
                           captionLayout="dropdown"
                         />
