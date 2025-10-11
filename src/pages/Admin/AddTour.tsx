@@ -1,3 +1,4 @@
+import MultipleImagesUploader from "@/components/MultipleImagesUploader";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -32,16 +33,24 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useGetDivisionsQuery } from "@/redux/features/division/division.api";
-import { useGetTourTypeQuery } from "@/redux/features/tour/tour.api";
+import {
+  useAddTourMutation,
+  useGetTourTypeQuery,
+} from "@/redux/features/tour/tour.api";
 import { format, formatISO } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { useForm, type FieldValues, type SubmitHandler } from "react-hook-form";
 
 export function AddTour() {
+  const [images, setImages] = useState<File[] | []>([]);
+  // console.log(images);
+
   const { data: tourTypeData, isLoading: tourTypeLoading } =
     useGetTourTypeQuery(undefined);
   const { data: divisionData, isLoading: divisionLoading } =
     useGetDivisionsQuery(undefined);
+  const [addTour] = useAddTourMutation();
 
   const divisionOptions = divisionData?.map(
     (item: { name: string; _id: string }) => ({
@@ -70,16 +79,30 @@ export function AddTour() {
     },
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     // console.log(data);
     const tourData = {
       ...data,
       startDate: formatISO(data.startDate),
-      endDate: formatISO(data.endDate)
-    }
-    console.log(tourData);
+      endDate: formatISO(data.endDate),
+    };
     
 
+    const formData = new FormData();
+    // console.log(formData)
+    formData.append("data", JSON.stringify(tourData));
+    console.log(formData.get("data"));
+
+    images.forEach((image) => formData.append("files", image));
+    // console.log(formData.getAll("files"))
+
+
+    try {
+      const res = await addTour(formData).unwrap();
+      console.log(res);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // console.log(new Date(new Date().setDate((new Date().getDate()-1))))
@@ -211,9 +234,11 @@ export function AddTour() {
                           selected={new Date(field.value)}
                           onSelect={field.onChange}
                           disabled={(date) =>
-                            date < new Date(new Date().setDate((new Date().getDate()-1)))
+                            date <
+                            new Date(
+                              new Date().setDate(new Date().getDate() - 1)
+                            )
                           }
-                          
                           captionLayout="dropdown"
                         />
                       </PopoverContent>
@@ -253,7 +278,10 @@ export function AddTour() {
                           selected={new Date(field.value)}
                           onSelect={field.onChange}
                           disabled={(date) =>
-                            date < new Date(new Date().setDate((new Date().getDate()-1)))
+                            date <
+                            new Date(
+                              new Date().setDate(new Date().getDate() - 1)
+                            )
                           }
                           captionLayout="dropdown"
                         />
@@ -264,29 +292,35 @@ export function AddTour() {
                 )}
               />
             </div>
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tour Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Discover the serene beauty of Bandarban...."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="flex gap-6">
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem className="flex-1 h-full  ">
+                    <FormLabel>Tour Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        className="h-52"
+                        placeholder="Discover the serene beauty of Bandarban...."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex-1 mt-5">
+                <MultipleImagesUploader onChange={setImages} />
+              </div>
+            </div>
           </form>
         </Form>
       </CardContent>
 
       <CardFooter className="flex-col gap-2">
-        <Button form="add-tour" type="submit" className="w-full">
-          Submit
+        <Button form="add-tour" type="submit" className="w-full" >
+          Create Tour
         </Button>
       </CardFooter>
     </Card>
