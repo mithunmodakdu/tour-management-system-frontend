@@ -1,3 +1,4 @@
+import MultipleImagesUploader from "@/components/MultipleImagesUploader";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -35,9 +36,13 @@ import { useGetDivisionsQuery } from "@/redux/features/division/division.api";
 import { useGetTourTypeQuery } from "@/redux/features/tour/tour.api";
 import { format, formatISO } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 export function AddTour() {
+  const [images, setImages] = useState<File[] | []>([]);
+  console.log(images)
+
   const { data: tourTypeData, isLoading: tourTypeLoading } =
     useGetTourTypeQuery(undefined);
   const { data: divisionData, isLoading: divisionLoading } =
@@ -75,10 +80,15 @@ export function AddTour() {
     const tourData = {
       ...data,
       startDate: formatISO(data.startDate),
-      endDate: formatISO(data.endDate)
-    }
-    console.log(tourData);
-    
+      endDate: formatISO(data.endDate),
+    };
+    // console.log(tourData);
+
+    const formData = new FormData();
+    // console.log(formData)
+    images.forEach((image)=> formData.append("files", image))
+    console.log(formData.getAll("files"))
+
 
   };
 
@@ -211,9 +221,11 @@ export function AddTour() {
                           selected={new Date(field.value)}
                           onSelect={field.onChange}
                           disabled={(date) =>
-                            date < new Date(new Date().setDate((new Date().getDate()-1)))
+                            date <
+                            new Date(
+                              new Date().setDate(new Date().getDate() - 1)
+                            )
                           }
-                          
                           captionLayout="dropdown"
                         />
                       </PopoverContent>
@@ -253,7 +265,10 @@ export function AddTour() {
                           selected={new Date(field.value)}
                           onSelect={field.onChange}
                           disabled={(date) =>
-                            date < new Date(new Date().setDate((new Date().getDate()-1)))
+                            date <
+                            new Date(
+                              new Date().setDate(new Date().getDate() - 1)
+                            )
                           }
                           captionLayout="dropdown"
                         />
@@ -264,22 +279,27 @@ export function AddTour() {
                 )}
               />
             </div>
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tour Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Discover the serene beauty of Bandarban...."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="flex gap-6 items-start">
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem className="flex-1" >
+                    <FormLabel>Tour Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Discover the serene beauty of Bandarban...."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex-1 mt-5">
+                <MultipleImagesUploader onChange={setImages}/>
+              </div>
+            </div>
           </form>
         </Form>
       </CardContent>
