@@ -31,6 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import type { FileMetadata } from "@/hooks/use-file-upload";
 import { cn } from "@/lib/utils";
 import { useGetDivisionsQuery } from "@/redux/features/division/division.api";
 import {
@@ -43,7 +44,7 @@ import { useState } from "react";
 import { useForm, type FieldValues, type SubmitHandler } from "react-hook-form";
 
 export function AddTour() {
-  const [images, setImages] = useState<File[] | []>([]);
+  const [images, setImages] = useState<(File | FileMetadata)[] | []>([]);
   // console.log(images);
 
   const { data: tourTypeData, isLoading: tourTypeLoading } =
@@ -93,7 +94,7 @@ export function AddTour() {
     formData.append("data", JSON.stringify(tourData));
     console.log(formData.get("data"));
 
-    images.forEach((image) => formData.append("files", image));
+    images.forEach((image) => formData.append("files", image as File));
     // console.log(formData.getAll("files"))
 
 
@@ -143,7 +144,7 @@ export function AddTour() {
                     <FormLabel>Tour Type</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      
                       disabled={tourTypeLoading}
                     >
                       <FormControl>
@@ -176,7 +177,7 @@ export function AddTour() {
                     <FormLabel>Division</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                     
                       disabled={divisionLoading}
                     >
                       <FormControl>
