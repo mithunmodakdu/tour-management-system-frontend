@@ -31,6 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import type { FileMetadata } from "@/hooks/use-file-upload";
 import { cn } from "@/lib/utils";
 import { useGetDivisionsQuery } from "@/redux/features/division/division.api";
 import {
@@ -40,10 +41,15 @@ import {
 import { format, formatISO } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useState } from "react";
-import { useForm, type FieldValues, type SubmitHandler } from "react-hook-form";
+import {
+  useFieldArray,
+  useForm,
+  type FieldValues,
+  type SubmitHandler,
+} from "react-hook-form";
 
 export function AddTour() {
-  const [images, setImages] = useState<File[] | []>([]);
+  const [images, setImages] = useState<(File | FileMetadata)[] | []>([]);
   // console.log(images);
 
   const { data: tourTypeData, isLoading: tourTypeLoading } =
@@ -76,8 +82,15 @@ export function AddTour() {
       startDate: "",
       endDate: "",
       description: "",
+      included: [{ value: "" }],
     },
   });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "included",
+  });
+  console.log(fields);
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     // console.log(data);
@@ -85,24 +98,24 @@ export function AddTour() {
       ...data,
       startDate: formatISO(data.startDate),
       endDate: formatISO(data.endDate),
+      included: data.included.map((item: {value: string}) => item.value )
     };
-    
+    console.log(tourData)
 
     const formData = new FormData();
     // console.log(formData)
     formData.append("data", JSON.stringify(tourData));
     console.log(formData.get("data"));
 
-    images.forEach((image) => formData.append("files", image));
+    images.forEach((image) => formData.append("files", image as File));
     // console.log(formData.getAll("files"))
 
-
-    try {
-      const res = await addTour(formData).unwrap();
-      console.log(res);
-    } catch (error) {
-      console.error(error);
-    }
+    // try {
+    //   const res = await addTour(formData).unwrap();
+    //   console.log(res);
+    // } catch (error) {
+    //   console.error(error);
+    // }
   };
 
   // console.log(new Date(new Date().setDate((new Date().getDate()-1))))
@@ -143,7 +156,6 @@ export function AddTour() {
                     <FormLabel>Tour Type</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
                       disabled={tourTypeLoading}
                     >
                       <FormControl>
@@ -157,7 +169,7 @@ export function AddTour() {
                             tourTypeName: string;
                             tourTypeId: string;
                           }) => (
-                            <SelectItem value={item.tourTypeId}>
+                            <SelectItem key={item.tourTypeId} value={item.tourTypeId}>
                               {item.tourTypeName}
                             </SelectItem>
                           )
@@ -176,7 +188,6 @@ export function AddTour() {
                     <FormLabel>Division</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
                       disabled={divisionLoading}
                     >
                       <FormControl>
@@ -190,7 +201,7 @@ export function AddTour() {
                             divisionName: string;
                             divisionId: string;
                           }) => (
-                            <SelectItem value={item.divisionId}>
+                            <SelectItem key={item.divisionId} value={item.divisionId}>
                               {item.divisionName}
                             </SelectItem>
                           )
@@ -314,12 +325,34 @@ export function AddTour() {
                 <MultipleImagesUploader onChange={setImages} />
               </div>
             </div>
+            <div className="border-t border-muted w-full border-2" />
+            <div>
+              <Button onClick={() => append({ value: "" })}>
+                Add Includes
+              </Button>
+            </div>
+            {fields.map((item, index) => (
+              <FormField
+                control={form.control}
+                key={item.id}
+                name={`included.${index}.value`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tour Title</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Bandarban Hills" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ))}
           </form>
         </Form>
       </CardContent>
 
       <CardFooter className="flex-col gap-2">
-        <Button form="add-tour" type="submit" className="w-full" >
+        <Button form="add-tour" type="submit" className="w-full">
           Create Tour
         </Button>
       </CardFooter>
