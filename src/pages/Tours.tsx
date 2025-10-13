@@ -27,7 +27,7 @@ export default function Tours() {
 
               <div className="flex items-center justify-between mb-3">
                 <span className="text-xl font-bold text-primary">
-                  {/* From ৳{item.costFrom.toLocaleString()} */}
+                  From ৳{item?.costFrom?.toLocaleString()}
                 </span>
                 <span className="text-sm text-muted-foreground">
                   Max {item.maxGuest} guests
