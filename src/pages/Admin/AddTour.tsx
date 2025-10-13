@@ -47,6 +47,7 @@ import {
   type FieldValues,
   type SubmitHandler,
 } from "react-hook-form";
+import { toast } from "sonner";
 
 export function AddTour() {
   const [images, setImages] = useState<(File | FileMetadata)[] | []>([]);
@@ -76,14 +77,41 @@ export function AddTour() {
 
   const form = useForm({
     defaultValues: {
-      title: "",
-      tourType: "",
+      title: "Cox's Bazar Beach Adventure",
+      description:
+        "Experience the world's longest natural sea beach with golden sandy shores, crystal clear waters, and breathtaking sunsets. Enjoy beach activities, local seafood, and explore nearby attractions including Himchari National Park and Inani Beach.",
+      location: "Cox's Bazar",
+      costFrom: "15000",
+      startDate: new Date(),
+      endDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days later
+      departureLocation: "Dhaka",
+      arrivalLocation: "Cox's Bazar",
+      included: [
+        { value: "Accommodation for 2 nights" },
+        { value: "All meals (breakfast, lunch, dinner)" },
+        { value: "Transportation (AC bus)" },
+        { value: "Professional tour guide" },
+      ],
+      excluded: [
+        { value: "Personal expenses" },
+        { value: "Extra activities not mentioned" },
+        { value: "Travel insurance" },
+      ],
+      amenities: [
+        { value: "Air-conditioned rooms" },
+        { value: "Free WiFi" },
+        { value: "Swimming pool access" },
+        { value: "Beach access" },
+      ],
+      tourPlan: [
+        { value: "Day 1: Arrival and beach exploration" },
+        { value: "Day 2: Himchari National Park visit" },
+        { value: "Day 3: Inani Beach and departure" },
+      ],
+      maxGuest: "25",
+      minAge: "5",
       division: "",
-      startDate: "",
-      endDate: "",
-      description: "",
-      included: [{ value: "" }],
-      excluded: [{ value: "" }],
+      tourType: "",
     },
   });
 
@@ -102,14 +130,56 @@ export function AddTour() {
     name: "excluded",
   });
 
+  const {
+    fields: amenitiesFields,
+    append: appendAmenities,
+    remove: removeAmenities,
+  } = useFieldArray({
+    control: form.control,
+    name: "amenities",
+  });
+
+  const {
+    fields: tourPlanFields,
+    append: appendTourPlan,
+    remove: removeTourPlan,
+  } = useFieldArray({
+    control: form.control,
+    name: "tourPlan",
+  });
+
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     // console.log(data);
+    const toastId = toast.loading("Creating tour....");
+
+    if (images.length === 0) {
+      toast.error("Please add some images", { id: toastId });
+      return;
+    }
+
     const tourData = {
       ...data,
+      costFrom: Number(data.costFrom),
+      minAge: Number(data.minAge),
+      maxGuest: Number(data.maxGuest),
       startDate: formatISO(data.startDate),
       endDate: formatISO(data.endDate),
-      included: data.included.map((item: { value: string }) => item.value),
-      excluded: data.excluded.map((item: {value: string}) => item.value)
+      included:
+        data.included[0].value === ""
+          ? []
+          : data.included.map((item: { value: string }) => item.value),
+      excluded:
+        data.included[0].value === ""
+          ? []
+          : data.excluded.map((item: { value: string }) => item.value),
+      amenities:
+        data.amenities[0].value === ""
+          ? []
+          : data.amenities.map((item: { value: string }) => item.value),
+      tourPlan:
+        data.tourPlan[0].value === ""
+          ? []
+          : data.tourPlan.map((item: { value: string }) => item.value),
     };
     console.log(tourData);
 
@@ -124,8 +194,15 @@ export function AddTour() {
     try {
       const res = await addTour(formData).unwrap();
       console.log(res);
+      if(res.success){
+        toast.success("Tour created successfully.", {id: toastId});
+        form.reset();
+      }else{
+        toast.error("Something went wrong", {id: toastId})
+      }
     } catch (error) {
       console.error(error);
+      toast.error("Something went wrong", {id: toastId})
     }
   };
 
@@ -158,7 +235,7 @@ export function AddTour() {
                 </FormItem>
               )}
             />
-            <div className="flex gap-6">
+            <div className="flex gap-5">
               <FormField
                 control={form.control}
                 name="tourType"
@@ -230,7 +307,7 @@ export function AddTour() {
                 )}
               />
             </div>
-            <div className="flex gap-6">
+            <div className="flex gap-5">
               <FormField
                 control={form.control}
                 name="startDate"
@@ -320,7 +397,7 @@ export function AddTour() {
                 )}
               />
             </div>
-            <div className="flex gap-6">
+            <div className="flex gap-5">
               <FormField
                 control={form.control}
                 name="description"
@@ -341,6 +418,91 @@ export function AddTour() {
               <div className="flex-1 mt-5">
                 <MultipleImagesUploader onChange={setImages} />
               </div>
+            </div>
+            <div className="flex gap-5">
+              <FormField
+                control={form.control}
+                name="location"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Location</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="costFrom"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Cost</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex gap-5">
+              <FormField
+                control={form.control}
+                name="departureLocation"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Departure Location</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="arrivalLocation"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Arrival Location</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="flex gap-5">
+              <FormField
+                control={form.control}
+                name="maxGuest"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Max Guest</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="minAge"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Minimum Age</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
 
             {/* useArrayFields for Included*/}
@@ -428,6 +590,93 @@ export function AddTour() {
                 ))}
               </div>
             </div>
+
+            {/* useArrayFields for Amenities */}
+            <div>
+              <div className="flex justify-between">
+                <p className="font-semibold">Amenities</p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => appendAmenities({ value: "" })}
+                >
+                  <Plus />
+                </Button>
+              </div>
+
+              <div className="space-y-4 mt-4">
+                {amenitiesFields.map((item, index) => (
+                  <div className="flex gap-2" key={item.id}>
+                    <FormField
+                      control={form.control}
+                      name={`amenities.${index}.value`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button
+                      onClick={() => removeAmenities(index)}
+                      variant="destructive"
+                      className="!bg-red-700"
+                      size="icon"
+                      type="button"
+                    >
+                      <Trash2 />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* useArrayFields for Tour Plan */}
+            <div>
+              <div className="flex justify-between">
+                <p className="font-semibold">Tour Plan</p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => appendTourPlan({ value: "" })}
+                >
+                  <Plus />
+                </Button>
+              </div>
+
+              <div className="space-y-4 mt-4">
+                {tourPlanFields.map((item, index) => (
+                  <div className="flex gap-2" key={item.id}>
+                    <FormField
+                      control={form.control}
+                      name={`tourPlan.${index}.value`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button
+                      onClick={() => removeTourPlan(index)}
+                      variant="destructive"
+                      className="!bg-red-700"
+                      size="icon"
+                      type="button"
+                    >
+                      <Trash2 />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
           </form>
         </Form>
       </CardContent>
