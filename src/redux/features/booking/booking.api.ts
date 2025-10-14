@@ -9,6 +9,7 @@ export const bookingApi = baseApi.injectEndpoints({
         method: "POST",
         data: bookingData,
       }),
+      invalidatesTags: ["BOOKING"]
     }),
 
    
