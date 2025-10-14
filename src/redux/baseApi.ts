@@ -13,7 +13,7 @@ export const baseApi = createApi({
   //   credentials: "include"
   // }),
 
-  tagTypes: ["USER", "TOUR", "DIVISION"],
+  tagTypes: ["USER", "TOUR", "DIVISION", "BOOKING"],
 
   endpoints: () => ({})
 });
