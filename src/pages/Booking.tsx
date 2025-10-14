@@ -7,32 +7,35 @@ export default function Booking() {
   const [guestCount, setGuestCount] = useState(1);
   const [totalAmount, setTotalAmount] = useState(0);
 
-  console.log(totalAmount);
+  // console.log(totalAmount);
 
   const { id } = useParams();
   const { data, isLoading, isError } = useGetAllToursQuery({ _id: id });
-
+  // console.log(data);
   const tourData = data?.[0];
 
   useEffect(() => {
     if (!isLoading && !isError) {
       setTotalAmount(guestCount * tourData!.costFrom);
     }
-  }, [guestCount, totalAmount, isLoading, isError]);
+  }, [isLoading, isError, guestCount, totalAmount]);
 
   const incrementGuest = () => {
-    setGuestCount((prv) => prv + 1);
+    setGuestCount((prev) => prev + 1);
   };
 
   const decrementGuest = () => {
-    setGuestCount((prv) => prv - 1);
+    setGuestCount((prev) => prev - 1);
   };
 
-
+  const handleBooking = async() => {
+    console.log(guestCount)
+  }
 
   if (isLoading) {
     return <p>Loading...</p>;
   }
+
 
   return (
     <div className="flex flex-col md:flex-row gap-8 p-6 container mx-auto">
@@ -146,7 +149,7 @@ export default function Booking() {
                   </div>
                 </div>
 
-                <Button onClick={handleBooking} className="w-full" size="lg">
+                <Button onClick={handleBooking } className="w-full" size="lg">
                   Book Now
                 </Button>
               </div>
