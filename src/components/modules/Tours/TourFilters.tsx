@@ -39,16 +39,26 @@ export default function TourFilters() {
   );
 
  const handleDivisionChange = (value: string) => {
-  console.log(value)
   const params = new URLSearchParams(searchParams);
-  params.set("division", value)
+  params.set("division", value);
+  // console.log(params.get("division"))
+  setSearchParams(params)
  };
 
  const handleTourTypeChange = (value: string) => {
-  console.log(value)
+  const params = new URLSearchParams(searchParams);
+  params.set("tourType", value);
+  // console.log(params.get("tourType"))
+  setSearchParams(params);
+
  };
 
- const handleClearFilters = () => {};
+ const handleClearFilters = () => {
+  const params = new URLSearchParams(searchParams);
+  params.delete("division");
+  params.delete("tourType");
+  setSearchParams(params);
+ };
 
   return (
     <div className="col-span-3 w-1/4 h-[500px] border border-muted rounded-md p-5 space-y-4">
@@ -61,7 +71,7 @@ export default function TourFilters() {
         <div>
           <Label className="mb-2">Division to visit</Label>
           <Select
-            onValueChange={handleDivisionChange}
+            onValueChange={(value) => handleDivisionChange(value)}
             value={selectedDivision? selectedDivision : ""}
             disabled= {divisionLoading}
           >
