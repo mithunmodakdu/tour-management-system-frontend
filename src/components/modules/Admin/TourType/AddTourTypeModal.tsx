@@ -31,6 +31,7 @@ export function AddTourTypeModal() {
     console.log(res);
     if (res.success) {
       toast.success("Tour type created successfully.");
+      form.reset();
     }
   };
 
