@@ -3,14 +3,17 @@ import { Button } from "@/components/ui/button";
 import {
   useGetAllToursQuery,
 } from "@/redux/features/tour/tour.api";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 
 
 export default function Tours() {
-  
-  // console.log(selectedDivision)
 
-  const { data } = useGetAllToursQuery(undefined);
+  const [searchParams] = useSearchParams();
+
+  const division = searchParams.get("division") || undefined;
+  const tourType = searchParams.get("tourType") || undefined;
+
+  const { data } = useGetAllToursQuery({division, tourType});
   // console.log(data);
 
   
