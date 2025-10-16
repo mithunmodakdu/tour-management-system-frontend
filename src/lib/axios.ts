@@ -22,10 +22,27 @@ axiosInstance.interceptors.request.use(function (config) {
 );
 
 
-axiosInstance.interceptors.response.use(function onFulfilled(response) {
-
+axiosInstance.interceptors.response.use(
+  (response) => {
+    // console.log("response success")
     return response;
-  }, function onRejected(error) {
+  },
 
+  async(error) => {
+    console.log("request failed", error.response)
+
+    if(error.response.status === 500 && error.response.data.message === "jwt expired"){
+      console.log("Your token has expired")
+      try {
+        const res = await axiosInstance.post("/auth/refresh-token");
+        console.log("New access token arrived", res)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+
+    // for everything
     return Promise.reject(error);
-  });
+  }
+);
