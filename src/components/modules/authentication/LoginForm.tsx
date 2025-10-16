@@ -26,15 +26,14 @@ export function LoginForm({
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    console.log(data);
+    // console.log(data);
     const userInfo = {
       email: data.email,
       password: data.password,
     };
 
     try {
-      const res = await login(userInfo).unwrap();
-  
+      await login(userInfo).unwrap();
       toast.success("You logged in successfully.");
       navigate("/")
 
