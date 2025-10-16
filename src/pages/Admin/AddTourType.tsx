@@ -35,7 +35,7 @@ export default function AddTourType() {
   const totalPages = data?.meta?.totalPages || 1;
   // console.log(totalPages)
 
-  console.log(Array.from({ length: totalPages }, (_, index) => index + 1));
+  // console.log(Array.from({ length: totalPages }, (_, index) => index + 1));
 
   const [removeTourType] = useRemoveTourTypeMutation();
 
