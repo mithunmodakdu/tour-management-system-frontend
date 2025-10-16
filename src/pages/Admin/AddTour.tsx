@@ -63,11 +63,12 @@ export function AddTour() {
     (item: { name: string; _id: string }) => ({
       divisionName: item.name,
       divisionId: item._id,
+      
     })
   );
   // console.log(divisionOptions);
 
-  const tourTypeOptions = tourTypeData?.map(
+  const tourTypeOptions = tourTypeData?.data?.map(
     (item: { name: string; _id: string }) => ({
       tourTypeName: item.name,
       tourTypeId: item._id,

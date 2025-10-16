@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useGetDivisionsQuery } from "@/redux/features/division/division.api";
-import { useGetAllToursQuery } from "@/redux/features/tour/tour.api";
+import { useGetAllToursQuery, useGetTourTypeQuery } from "@/redux/features/tour/tour.api";
 
 import { format } from "date-fns";
 import { Link, useParams } from "react-router";
@@ -9,18 +9,31 @@ export default function TourDetails() {
   const {id} = useParams();
   
   const { data, isLoading } = useGetAllToursQuery({ _id: id });
+  // console.log("tour data", data)
 
   const { data: divisionData } = useGetDivisionsQuery(
     {
       _id: data?.[0]?.division,
-      fields: "name",
+      fieldsName: "name"
     },
     {
-      skip: !data,
+      skip: !data
+    }
+    
+  );
+  // console.log("division data", divisionData);
+
+  const {data: tourTypeData} = useGetTourTypeQuery(
+    {
+      _id: data?.[0]?.tourType,
+      fieldsName: "name"
+    },
+    {
+      skip: !data
     }
   );
-
-  console.log(divisionData);
+  // console.log("tourType data", tourTypeData?.data?.[0]?.name);
+  
 
   const tourData = data?.[0];
 
@@ -73,10 +86,9 @@ export default function TourDetails() {
                 "PP"
               )}{" "}
               -{" "}
-              {format(
-                new Date(tourData?.endDate ? tourData?.endDate : new Date()),
-                "PP"
-              )}
+              {
+                format(new Date(tourData?.endDate? tourData?.endDate : new Date() ), "PP")
+              }
             </p>
             <p>
               <strong>Departure:</strong> {tourData?.departureLocation}
@@ -88,7 +100,7 @@ export default function TourDetails() {
               <strong>Division:</strong> {divisionData?.[0]?.name}
             </p>
             <p>
-              <strong>Tour Type:</strong> {tourData?.tourType}
+              <strong>Tour Type:</strong> {tourTypeData?.data?.[0]?.name}
             </p>
             <p>
               <strong>Min Age:</strong> {tourData?.minAge} years
