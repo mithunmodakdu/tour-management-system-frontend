@@ -3,9 +3,19 @@ import { AlertCircleIcon, ImageUpIcon, XIcon } from "lucide-react"
 import { useFileUpload } from "@/hooks/use-file-upload"
 import { useEffect } from "react"
 
-export default function SingleImageUploader({onChange}) {
+
+
+export default function SingleImageUploader({thumbnail, onChange}) {
+  console.log(thumbnail)
   const maxSizeMB = 5
   const maxSize = maxSizeMB * 1024 * 1024 // 5MB default
+
+  const initialFiles = [
+  {
+    url: `${thumbnail}`,
+  }
+  
+]
 
   const [
     { files, isDragging, errors },
@@ -21,6 +31,7 @@ export default function SingleImageUploader({onChange}) {
   ] = useFileUpload({
     accept: "image/*",
     maxSize,
+    initialFiles
   })
 
   
