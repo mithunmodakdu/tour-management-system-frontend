@@ -20,10 +20,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {useGetDivisionBySlugQuery } from "@/redux/features/division/division.api";
+import {useEditDivisionMutation, useGetDivisionBySlugQuery } from "@/redux/features/division/division.api";
 import { SquarePen } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 interface IProps {
   slug: string;
@@ -34,19 +35,47 @@ export function EditDivisionModal(props: IProps) {
   // console.log(props)
 
   const [image, setImage] = useState<File | null>(null);
-  console.log("inside division edit modal", image)
+  // console.log("inside division edit modal", image)
   
-  const {data} = useGetDivisionBySlugQuery(props.slug);
-  console.log(data)
+  const {data:divisionBySlugData } = useGetDivisionBySlugQuery(props.slug);
+  // console.log(divisionBySlugData)
+
+  const [editDivision] = useEditDivisionMutation();
 
   const [open, setOpen] = useState(false);
 
-  const form = useForm({
-    defaultValues: {
-      name: `${data?.data?.name}` || "",
-      description: `${data?.data?.description}` || "",
-    },
-  });
+  const form = useForm();
+
+  const onSubmit = async (data) => {
+    // console.log(data)
+
+    const formData = new FormData();
+    formData.append("data", JSON.stringify(data));
+    formData.append("file", image as File );
+    // console.log(formData.get("data"))
+    // console.log(formData.get("file"))
+
+    const toastId = toast.loading("Updating division info...");
+    
+    const divisionId = divisionBySlugData?._id;
+    const updateData = {
+      divisionId,
+      formData
+    }
+
+    try {
+      const res = await editDivision(updateData).unwrap();
+      // console.log(res)
+      if(res.success){
+        toast.success("Division info updated successfully", {id: toastId});
+        setOpen(false);
+      }
+    } catch (error) {
+      console.error(error)
+    }
+
+
+  };
 
  
 
@@ -66,8 +95,9 @@ export function EditDivisionModal(props: IProps) {
         </DialogHeader>
         <Form {...form}>
           <form
-            id="add-division"
+            id="edit-division"
             className="space-y-5"
+            onSubmit={form.handleSubmit(onSubmit)}
           >
             <FormField
               control={form.control}
@@ -76,7 +106,7 @@ export function EditDivisionModal(props: IProps) {
                 <FormItem>
                   <FormLabel>Division Name</FormLabel>
                   <FormControl>
-                    <Input {...field} value={data?.data?.name} />
+                    <Input defaultValue={divisionBySlugData?.name}  {...field}  />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -90,8 +120,9 @@ export function EditDivisionModal(props: IProps) {
                   <FormLabel>Division Description</FormLabel>
                   <FormControl>
                     <Textarea
+                      defaultValue={divisionBySlugData?.description}
                       {...field}
-                      value={data?.data?.description}
+                    
                     />
                   </FormControl>
                   <FormMessage />
