@@ -30,6 +30,8 @@ interface IProps {
   slug: string;
 }
 
+
+
 export function EditDivisionModal(props: IProps) {
 
   // console.log(props)
@@ -38,7 +40,7 @@ export function EditDivisionModal(props: IProps) {
   // console.log("inside division edit modal", image)
   
   const {data:divisionBySlugData } = useGetDivisionBySlugQuery(props.slug);
-  // console.log(divisionBySlugData)
+  console.log(divisionBySlugData)
 
   const [editDivision] = useEditDivisionMutation();
 
@@ -56,7 +58,7 @@ export function EditDivisionModal(props: IProps) {
     // console.log(formData.get("file"))
 
     const toastId = toast.loading("Updating division info...");
-    
+
     const divisionId = divisionBySlugData?._id;
     const updateData = {
       divisionId,
@@ -90,7 +92,7 @@ export function EditDivisionModal(props: IProps) {
         <DialogHeader>
           <DialogTitle>Edit Division</DialogTitle>
           <DialogDescription>
-            Please fill in the form here. Click submit when you&apos;re done.
+            Please edit or update division info here. Click submit when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -130,7 +132,7 @@ export function EditDivisionModal(props: IProps) {
               )}
             />
           </form>
-          <SingleImageUploader onChange={setImage} />
+          <SingleImageUploader thumbnail={divisionBySlugData?.thumbnail} onChange={setImage} />
         </Form>
         <DialogFooter>
           <DialogClose asChild>
