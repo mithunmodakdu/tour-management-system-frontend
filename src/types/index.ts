@@ -19,4 +19,11 @@ export interface ISidebarItem {
   }[];
 }
 
+export interface IPageInfo {
+  pageTitle: string;
+  pageSubTitle?: string;
+  pageDescription: string;
+  pageImage: string;
+}
+
 export type TRole = "SUPER_ADMIN" | "ADMIN" | "USER"; 
